@@ -4,6 +4,8 @@
 
 A curated travel guide site featuring 12 destinations with real prices, realistic itineraries, airport tips, safety notes, weather insights, and local recommendations.
 
+![Travel Explorer screenshot](screenshot.png)
+
 ## Stack
 
 Pure static site — vanilla **HTML, CSS, and JavaScript**. No frameworks, no bundler, no build step, no backend.
