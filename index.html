@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Explorer — We went, so you know where to go.</title>
+  <meta name="description" content="Curated travel guides with real prices, realistic itineraries, airport tips, safety notes, weather insights, and local recommendations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="#home" class="brand">
+        <span class="brand-mark">TE</span>
+        <span class="brand-name">Travel Explorer</span>
+      </a>
+      <nav class="nav-links" id="nav-links">
+        <a href="#home">Home</a>
+        <a href="#guides">Guides</a>
+        <a href="#cities">Cities</a>
+        <a href="#tools">Travel Tools</a>
+        <a href="#weather">Weather</a>
+        <a href="#safety">Safety</a>
+        <a href="#enquiry">Enquiry</a>
+      </nav>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-image" style="background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1800&q=80');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-kicker">Travel Explorer · Est. 2026</p>
+      <h1 class="hero-headline">We went, so you know<br/>where to go.</h1>
+      <p class="hero-sub">Curated travel guides with real prices, realistic itineraries, airport tips, safety notes, weather insights, and local recommendations.</p>
+      <div class="hero-cta">
+        <a href="#guides" class="btn btn-primary">Read Latest Guide</a>
+        <a href="#enquiry" class="btn btn-secondary">Send Enquiry</a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span>12 Destinations</span>
+      <span>·</span>
+      <span>Real Prices in SGD</span>
+      <span>·</span>
+      <span>Updated 2026</span>
+    </div>
+  </section>
+
+  <!-- FEATURED GUIDE -->
+  <section class="featured" id="guides">
+    <div class="container">
+      <p class="section-kicker">Latest Guide</p>
+      <h2 class="section-title">This week we went to…</h2>
+      <article class="featured-card" id="featured-card">
+        <!-- populated by JS -->
+      </article>
+    </div>
+  </section>
+
+  <!-- CITIES -->
+  <section class="cities" id="cities">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">The Library</p>
+          <h2 class="section-title">Every city we've explored.</h2>
+        </div>
+        <p class="section-lede">Twelve destinations, all walked, eaten, and stayed in. Tap any card to open the full guide.</p>
+      </div>
+      <div class="city-grid" id="city-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAVEL TOOLS -->
+  <section class="tools" id="tools">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Travel Tools</p>
+          <h2 class="section-title">Plan it before you fly.</h2>
+        </div>
+        <p class="section-lede">Three small calculators we built because spreadsheets are not vacation.</p>
+      </div>
+
+      <div class="tool-tabs" role="tablist">
+        <button class="tool-tab active" data-tab="budget" role="tab">Budget Calculator</button>
+        <button class="tool-tab" data-tab="packing" role="tab">Packing Checklist</button>
+        <button class="tool-tab" data-tab="itinerary" role="tab">Itinerary Planner</button>
+      </div>
+
+      <!-- BUDGET CALCULATOR -->
+      <div class="tool-panel active" id="tool-budget">
+        <div class="tool-grid">
+          <div class="tool-form">
+            <h3>Trip Budget Calculator</h3>
+            <p class="tool-desc">Quick total in SGD. The daily budget pre-fills from each destination's guide — adjust to your style.</p>
+            <label>
+              Destination
+              <select id="budget-destination"></select>
+            </label>
+            <label>
+              Number of travellers
+              <input type="number" id="budget-travellers" min="1" value="2" />
+            </label>
+            <label>
+              Number of days
+              <input type="number" id="budget-days" min="1" value="5" />
+            </label>
+            <label>
+              Daily budget per person (SGD)
+              <input type="number" id="budget-daily" min="0" value="150" />
+            </label>
+          </div>
+          <div class="tool-result">
+            <p class="tool-result-label">Estimated total</p>
+            <p class="tool-result-value" id="budget-total">SGD 1,500</p>
+            <p class="tool-result-note" id="budget-note">2 travellers · 5 days · SGD 150 / day</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PACKING CHECKLIST -->
+      <div class="tool-panel" id="tool-packing">
+        <div class="packing-head">
+          <div>
+            <h3>Packing Checklist</h3>
+            <p class="tool-desc">Tick as you pack. Your progress is saved on this device.</p>
+          </div>
+          <div class="packing-progress">
+            <div class="progress-bar"><div class="progress-fill" id="packing-fill"></div></div>
+            <p class="progress-text" id="packing-text">0 / 0 packed</p>
+            <button class="link-btn" id="packing-reset">Reset list</button>
+          </div>
+        </div>
+        <div class="packing-grid" id="packing-grid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- ITINERARY PLANNER -->
+      <div class="tool-panel" id="tool-itinerary">
+        <h3>Itinerary Planner</h3>
+        <p class="tool-desc">Build a day-by-day plan. Saved on this device — clear it anytime.</p>
+        <form class="itinerary-form" id="itinerary-form">
+          <label>
+            Day
+            <input type="number" id="itin-day" min="1" max="14" value="1" required />
+          </label>
+          <label>
+            Time
+            <input type="time" id="itin-time" required />
+          </label>
+          <label class="grow">
+            Activity
+            <input type="text" id="itin-activity" placeholder="e.g. Tsukiji Outer Market breakfast" required />
+          </label>
+          <label class="grow">
+            Notes
+            <input type="text" id="itin-notes" placeholder="Optional" />
+          </label>
+          <button type="submit" class="btn btn-primary">Add to Itinerary</button>
+        </form>
+        <div class="itinerary-list" id="itinerary-list">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEATHER -->
+  <section class="weather" id="weather">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Weather Lookup</p>
+          <h2 class="section-title">Pack for the forecast.</h2>
+        </div>
+        <p class="section-lede">Live conditions via the OpenWeather API. Add your free API key in <code>app.js</code> to enable.</p>
+      </div>
+      <div class="weather-card">
+        <form class="weather-form" id="weather-form">
+          <label class="grow">
+            City
+            <input type="text" id="weather-city" placeholder="e.g. Tokyo" required />
+          </label>
+          <button type="submit" class="btn btn-primary">Check Weather</button>
+        </form>
+        <div class="weather-result" id="weather-result">
+          <p class="weather-placeholder">Enter a city above to see live conditions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section class="safety" id="safety">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Travel Safety</p>
+          <h2 class="section-title">The unsexy but essential bit.</h2>
+        </div>
+        <p class="section-lede">General advice that applies almost everywhere. City-specific notes live inside each guide.</p>
+      </div>
+      <div class="safety-grid">
+        <article class="safety-card">
+          <h3>Documents</h3>
+          <p>Passport valid 6+ months past return. Keep a photo of your passport, insurance, and key bookings in a separate cloud folder you can reach without your phone.</p>
+        </article>
+        <article class="safety-card">
+          <h3>Money</h3>
+          <p>Carry two cards from different networks. Tell your bank you're travelling. Always have ~SGD 100 cash equivalent for taxis when card terminals fail.</p>
+        </article>
+        <article class="safety-card">
+          <h3>Health</h3>
+          <p>Pack a small kit: paracetamol, anti-diarrheal, rehydration salts, plasters, antihistamines. Get jabs done at least 4 weeks before departure.</p>
+        </article>
+        <article class="safety-card">
+          <h3>Insurance</h3>
+          <p>Non-negotiable. Confirm coverage for adventure activities, scooter riding, and any pre-existing conditions before you fly.</p>
+        </article>
+        <article class="safety-card">
+          <h3>Scams</h3>
+          <p>Common patterns: "closed temple" detours, broken meter taxis, jet-ski damage claims, friendly strangers at ATMs. When in doubt, walk away.</p>
+        </article>
+        <article class="safety-card">
+          <h3>Emergencies</h3>
+          <p>Save the local emergency number and your country's embassy contact in your phone before you arrive. Share your itinerary with one person back home.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENQUIRY -->
+  <section class="enquiry" id="enquiry">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Travel Enquiry</p>
+          <h2 class="section-title">Tell us where you're going.</h2>
+        </div>
+        <p class="section-lede">Quick form — we reply within 24 hours with hand-picked recommendations and answers to your questions.</p>
+      </div>
+
+      <form class="enquiry-form" id="enquiry-form" novalidate>
+        <div class="form-row two">
+          <label>
+            Full name <span class="req">*</span>
+            <input type="text" name="fullName" required />
+          </label>
+          <label>
+            Email <span class="req">*</span>
+            <input type="email" name="email" required />
+          </label>
+        </div>
+        <div class="form-row two">
+          <label>
+            Phone <span class="req">*</span>
+            <input type="tel" name="phone" required />
+          </label>
+          <label>
+            Destination of interest <span class="req">*</span>
+            <select name="destination" id="enquiry-destination" required>
+              <option value="">Select a destination</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row two">
+          <label>
+            Travel date <span class="req">*</span>
+            <input type="date" name="travelDate" required />
+          </label>
+          <label>
+            Number of travellers <span class="req">*</span>
+            <input type="number" name="travellers" min="1" value="2" required />
+          </label>
+        </div>
+        <label>
+          Message <span class="req">*</span>
+          <textarea name="message" rows="5" placeholder="Tell us about your travel style, dates flexibility, budget range, etc." required></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Send Enquiry</button>
+          <p class="form-note">By submitting you agree we may contact you about your trip. We never share your details.</p>
+        </div>
+        <div class="form-success" id="form-success" hidden>
+          <strong>Thanks!</strong> We've received your enquiry and will be in touch within 24 hours.
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <p class="brand-name">Travel Explorer</p>
+        <p class="footer-tagline">We went, so you know where to go.</p>
+      </div>
+      <nav class="footer-nav">
+        <a href="#home">Home</a>
+        <a href="#cities">Cities</a>
+        <a href="#tools">Tools</a>
+        <a href="#weather">Weather</a>
+        <a href="#enquiry">Enquiry</a>
+      </nav>
+      <p class="footer-small">© 2026 Travel Explorer. Images via Unsplash. Built with HTML, CSS, and a lot of long-haul flights.</p>
+    </div>
+  </footer>
+
+  <!-- GUIDE MODAL -->
+  <div class="modal" id="guide-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="document">
+      <button class="modal-close" data-close aria-label="Close guide">×</button>
+      <div class="modal-content" id="modal-content">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
