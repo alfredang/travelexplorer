@@ -406,41 +406,52 @@ function setupWeather() {
 }
 
 async function fetchWeather(city, mountEl) {
-  // ============================================================
-  //  INSERT YOUR OPENWEATHER API KEY HERE
-  //  Get a free key at https://openweathermap.org/api
-  // ============================================================
-  const API_KEY = '';
+  // Key is loaded from gitignored config.local.js (see config.example.js).
+  // Copy config.example.js to config.local.js and paste your AccuWeather key
+  // from https://developer.accuweather.com/ — it stays out of git.
+  const API_KEY = (typeof window !== 'undefined' && window.ACCUWEATHER_API_KEY) || '';
 
   if (!API_KEY) {
     mountEl.innerHTML = `
       <div class="weather-message">
         <div>
           <strong>Weather demo not connected.</strong><br/>
-          Add your free OpenWeather API key in <code>app.js</code> (search for <code>INSERT YOUR OPENWEATHER API KEY</code>) to enable live conditions for any city worldwide.
+          Add your free AccuWeather API key in <code>app.js</code> (search for <code>INSERT YOUR ACCUWEATHER API KEY</code>) to enable live conditions for any city worldwide.
         </div>
       </div>
     `;
     return;
   }
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY}`;
   try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(res.status === 404 ? 'City not found' : 'Weather service unavailable');
-    const data = await res.json();
-    const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`;
+    const locUrl = `https://dataservice.accuweather.com/locations/v1/cities/search?apikey=${API_KEY}&q=${encodeURIComponent(city)}`;
+    const locRes = await fetch(locUrl);
+    if (!locRes.ok) throw new Error(locRes.status === 401 ? 'Invalid API key' : 'Weather service unavailable');
+    const locations = await locRes.json();
+    if (!locations.length) throw new Error('City not found');
+    const loc = locations[0];
+
+    const condUrl = `https://dataservice.accuweather.com/currentconditions/v1/${loc.Key}?apikey=${API_KEY}&details=true`;
+    const condRes = await fetch(condUrl);
+    if (!condRes.ok) throw new Error('Weather service unavailable');
+    const condData = await condRes.json();
+    if (!condData.length) throw new Error('No current conditions');
+    const cur = condData[0];
+
+    const iconNum = String(cur.WeatherIcon).padStart(2, '0');
+    const iconUrl = `https://developer.accuweather.com/sites/default/files/${iconNum}-s.png`;
+
     mountEl.innerHTML = `
       <div class="weather-data">
-        <img class="weather-icon" src="${iconUrl}" alt="${escapeHTML(data.weather[0].description)}" />
+        <img class="weather-icon" src="${iconUrl}" alt="${escapeHTML(cur.WeatherText)}" />
         <div>
-          <p class="weather-city-out">${escapeHTML(data.name)}, ${escapeHTML(data.sys.country || '')}</p>
-          <p class="weather-condition">${escapeHTML(data.weather[0].description)}</p>
-          <p class="weather-temp">${Math.round(data.main.temp)}°C</p>
+          <p class="weather-city-out">${escapeHTML(loc.LocalizedName)}, ${escapeHTML(loc.Country.ID || '')}</p>
+          <p class="weather-condition">${escapeHTML(cur.WeatherText)}</p>
+          <p class="weather-temp">${Math.round(cur.Temperature.Metric.Value)}°C</p>
           <div class="weather-details">
-            <span>Feels like <strong>${Math.round(data.main.feels_like)}°C</strong></span>
-            <span>Humidity <strong>${data.main.humidity}%</strong></span>
-            <span>Wind <strong>${Math.round(data.wind.speed * 3.6)} km/h</strong></span>
+            <span>Feels like <strong>${Math.round(cur.RealFeelTemperature.Metric.Value)}°C</strong></span>
+            <span>Humidity <strong>${cur.RelativeHumidity}%</strong></span>
+            <span>Wind <strong>${Math.round(cur.Wind.Speed.Metric.Value)} km/h</strong></span>
           </div>
         </div>
       </div>
@@ -451,31 +462,109 @@ async function fetchWeather(city, mountEl) {
 }
 
 /* -------- Enquiry Form -------- */
+// Web3Forms — get a free access key at https://web3forms.com (paste your
+// email, they instantly email you the key). Paste the key below to enable
+// live email delivery. While the key is blank, the form falls back to the
+// mailto: panel so users can still send enquiries via their email client.
+const WEB3FORMS_ACCESS_KEY = '';
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+
+const ENQUIRY_TO_EMAIL = 'angch@tertiaryinfotech.com';
+
+function buildEnquiryMailto(data, destLabel) {
+  const subject = `Travel Explorer enquiry — ${data.fullName} (${destLabel})`;
+  const lines = [
+    `Full Name: ${data.fullName}`,
+    `Email: ${data.email}`,
+    `Phone: ${data.phone}`,
+    `Destination: ${destLabel}`,
+    `Travel Date: ${data.travelDate}`,
+    `Travellers: ${data.travellers}`,
+    '',
+    'Message:',
+    data.message,
+    '',
+    `Submitted: ${data.submittedAt}`,
+  ];
+  return `mailto:${ENQUIRY_TO_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+}
+
 function setupEnquiry() {
   const form = $('#enquiry-form');
   const success = $('#form-success');
+  const fallback = $('#form-fallback');
+  const mailtoLink = $('#form-mailto');
   const destSelect = $('#enquiry-destination');
+  const submitBtn = form.querySelector('button[type="submit"]');
 
   destSelect.innerHTML = '<option value="">Select a destination</option>' +
     DESTINATIONS.map(d => `<option value="${d.id}">${d.name}, ${d.country}</option>`).join('') +
     '<option value="other">Other / Not sure yet</option>';
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    fallback.hidden = true;
     if (!validateEnquiry(form)) return;
 
     const data = Object.fromEntries(new FormData(form).entries());
     data.submittedAt = new Date().toISOString();
 
-    const all = loadJSON(STORAGE.ENQUIRIES, []);
-    all.push(data);
-    saveJSON(STORAGE.ENQUIRIES, all);
+    const destLabel = destSelect.options[destSelect.selectedIndex]?.text || data.destination;
+    const payload = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: `Travel Explorer enquiry — ${data.fullName} (${destLabel})`,
+      from_name: 'Travel Explorer Enquiry',
+      name:        data.fullName,
+      email:       data.email,
+      phone:       data.phone,
+      destination: destLabel,
+      travel_date: data.travelDate,
+      travellers:  data.travellers,
+      message:     data.message,
+      submitted_at: data.submittedAt,
+    };
 
-    form.reset();
-    success.hidden = false;
-    setTimeout(() => { success.hidden = true; }, 6000);
-    showToast('Enquiry sent — we\'ll be in touch within 24 hours');
-    success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    try {
+      if (!WEB3FORMS_ACCESS_KEY) {
+        throw new Error('Email service not configured');
+      }
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept':       'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!(res.ok && result.success === true)) {
+        throw new Error(result.message || 'Email service responded without success');
+      }
+
+      const all = loadJSON(STORAGE.ENQUIRIES, []);
+      all.push(data);
+      saveJSON(STORAGE.ENQUIRIES, all);
+
+      form.reset();
+      success.hidden = false;
+      setTimeout(() => { success.hidden = true; }, 6000);
+      showToast('Enquiry sent — we\'ll be in touch within 24 hours');
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      // FormSubmit unreachable — offer mailto: fallback so the user can still
+      // send the enquiry via their own email client.
+      mailtoLink.href = buildEnquiryMailto(data, destLabel);
+      fallback.hidden = false;
+      fallback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast('Form server unreachable — use the email fallback below');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
   });
 }
 

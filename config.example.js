@@ -1,0 +1,1 @@
+window.ACCUWEATHER_API_KEY = '';

@@ -7,17 +7,20 @@
   <meta name="description" content="Curated travel guides with real prices, realistic itineraries, airport tips, safety notes, weather insights, and local recommendations." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Yuji+Mai&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- PAPER GRAIN OVERLAY -->
+  <div class="paper-grain" aria-hidden="true"></div>
 
   <!-- NAVIGATION -->
   <header class="nav">
     <div class="nav-inner">
       <a href="#home" class="brand">
-        <span class="brand-mark">TE</span>
-        <span class="brand-name">Travel Explorer</span>
+        <span class="brand-mark" aria-hidden="true">旅</span>
+        <span class="brand-name">Travel Explorer<span class="brand-jp" aria-hidden="true">旅の手帖</span></span>
       </a>
       <nav class="nav-links" id="nav-links">
         <a href="#home">Home</a>
@@ -38,20 +41,38 @@
   <section class="hero" id="home">
     <div class="hero-image" style="background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1800&q=80');"></div>
     <div class="hero-overlay"></div>
+
+    <!-- Enso watermark (zen circle) -->
+    <svg class="enso" viewBox="0 0 200 200" aria-hidden="true">
+      <path d="M 100 18 A 82 82 0 1 1 38 156" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"
+            stroke-dasharray="0 6 480 12" stroke-dashoffset="3"/>
+    </svg>
+
+    <!-- Falling sakura petals -->
+    <div class="petals" aria-hidden="true">
+      <span class="petal p1"></span>
+      <span class="petal p2"></span>
+      <span class="petal p3"></span>
+      <span class="petal p4"></span>
+      <span class="petal p5"></span>
+      <span class="petal p6"></span>
+      <span class="petal p7"></span>
+    </div>
+
     <div class="hero-content">
-      <p class="hero-kicker">Travel Explorer · Est. 2026</p>
-      <h1 class="hero-headline">We went, so you know<br/>where to go.</h1>
-      <p class="hero-sub">Curated travel guides with real prices, realistic itineraries, airport tips, safety notes, weather insights, and local recommendations.</p>
+      <p class="hero-kicker"><span class="hero-kicker-jp">桜の旅</span>Travel Explorer · Est. 2026</p>
+      <h1 class="hero-headline">We went,<br/>so you know<br/><em>where to go.</em></h1>
+      <p class="hero-sub">Curated travel guides with real prices, realistic itineraries, airport tips, safety notes, weather insights, and local recommendations — gathered in the manner of a quiet travel notebook.</p>
       <div class="hero-cta">
         <a href="#guides" class="btn btn-primary">Read Latest Guide</a>
         <a href="#enquiry" class="btn btn-secondary">Send Enquiry</a>
       </div>
     </div>
     <div class="hero-meta">
-      <span>12 Destinations</span>
-      <span>·</span>
+      <span>十二 Destinations</span>
+      <span class="dot"></span>
       <span>Real Prices in SGD</span>
-      <span>·</span>
+      <span class="dot"></span>
       <span>Updated 2026</span>
     </div>
   </section>
@@ -59,8 +80,8 @@
   <!-- FEATURED GUIDE -->
   <section class="featured" id="guides">
     <div class="container">
-      <p class="section-kicker">Latest Guide</p>
-      <h2 class="section-title">This week we went to…</h2>
+      <p class="section-kicker" data-num="一">Latest Guide</p>
+      <h2 class="section-title">This week<br/><span class="brush">we went to…</span></h2>
       <article class="featured-card" id="featured-card">
         <!-- populated by JS -->
       </article>
@@ -72,10 +93,10 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <p class="section-kicker">The Library</p>
-          <h2 class="section-title">Every city we've explored.</h2>
+          <p class="section-kicker" data-num="二">The Library</p>
+          <h2 class="section-title">Every city<br/>we've walked.</h2>
         </div>
-        <p class="section-lede">Twelve destinations, all walked, eaten, and stayed in. Tap any card to open the full guide.</p>
+        <p class="section-lede">Twelve destinations, all walked, eaten, and stayed in. Touch any card to unfold the guide — the way one might part a paper screen.</p>
       </div>
       <div class="city-grid" id="city-grid">
         <!-- populated by JS -->
@@ -88,10 +109,10 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <p class="section-kicker">Travel Tools</p>
-          <h2 class="section-title">Plan it before you fly.</h2>
+          <p class="section-kicker" data-num="三">Travel Tools</p>
+          <h2 class="section-title">Plan it<br/>before you fly.</h2>
         </div>
-        <p class="section-lede">Three small calculators we built because spreadsheets are not vacation.</p>
+        <p class="section-lede">Three quiet little instruments — a budget, a checklist, a day plan. Built because spreadsheets are not a vacation.</p>
       </div>
 
       <div class="tool-tabs" role="tablist">
@@ -184,8 +205,8 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <p class="section-kicker">Weather Lookup</p>
-          <h2 class="section-title">Pack for the forecast.</h2>
+          <p class="section-kicker" data-num="四">Weather Lookup</p>
+          <h2 class="section-title">Pack for<br/>the forecast.</h2>
         </div>
         <p class="section-lede">Live conditions via the OpenWeather API. Add your free API key in <code>app.js</code> to enable.</p>
       </div>
@@ -209,8 +230,8 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <p class="section-kicker">Travel Safety</p>
-          <h2 class="section-title">The unsexy but essential bit.</h2>
+          <p class="section-kicker" data-num="五">Travel Safety</p>
+          <h2 class="section-title">The quiet,<br/>essential bit.</h2>
         </div>
         <p class="section-lede">General advice that applies almost everywhere. City-specific notes live inside each guide.</p>
       </div>
@@ -248,10 +269,10 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <p class="section-kicker">Travel Enquiry</p>
-          <h2 class="section-title">Tell us where you're going.</h2>
+          <p class="section-kicker" data-num="六">Travel Enquiry</p>
+          <h2 class="section-title">Tell us<br/>where you're going.</h2>
         </div>
-        <p class="section-lede">Quick form — we reply within 24 hours with hand-picked recommendations and answers to your questions.</p>
+        <p class="section-lede">A short letter — we reply within 24 hours with hand-picked recommendations and answers to your questions.</p>
       </div>
 
       <form class="enquiry-form" id="enquiry-form" novalidate>
@@ -298,6 +319,11 @@
         <div class="form-success" id="form-success" hidden>
           <strong>Thanks!</strong> We've received your enquiry and will be in touch within 24 hours.
         </div>
+        <div class="form-fallback" id="form-fallback" hidden>
+          <strong>Form server is temporarily unreachable.</strong>
+          <p>No worries — click below to send the enquiry straight from your email app. Your details are kept in the form.</p>
+          <a class="btn btn-primary" id="form-mailto" href="#">Open Email to Send</a>
+        </div>
       </form>
     </div>
   </section>
@@ -316,7 +342,7 @@
         <a href="#weather">Weather</a>
         <a href="#enquiry">Enquiry</a>
       </nav>
-      <p class="footer-small">© 2026 Travel Explorer. Images via Unsplash. Built with HTML, CSS, and a lot of long-haul flights.</p>
+      <p class="footer-small">© 2026 Travel Explorer · 旅の手帖<br/>Images via Unsplash. Built with HTML, CSS, and a lot of long-haul flights.</p>
     </div>
   </footer>
 
@@ -334,6 +360,9 @@
   <!-- TOAST -->
   <div class="toast" id="toast" hidden></div>
 
+  <!-- Local-only config (gitignored). Copy config.example.js → config.local.js and paste your AccuWeather key.
+       Missing file is harmless: the weather widget just shows its placeholder message. -->
+  <script src="config.local.js"></script>
   <script src="data.js"></script>
   <script src="app.js"></script>
 </body>
